@@ -14,7 +14,6 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str = Field(min_length=6, max_length=72)
 
-
 class UserCreate(UserLogin):
     username: str = Field(min_length=2, max_length=150)
     
