@@ -1,6 +1,9 @@
-def main():
-    print("Hello from app-service!")
+from fastapi import FastAPI
+from router.user import router as auth_router
 
 
-if __name__ == "__main__":
-    main()
+app = FastAPI()
+
+app.include_router(auth_router)
+
+
