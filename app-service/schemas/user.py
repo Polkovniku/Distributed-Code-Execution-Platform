@@ -17,4 +17,10 @@ class UserLogin(BaseModel):
 class UserCreate(UserLogin):
     username: str = Field(min_length=2, max_length=150)
     
+class TokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    type_token: str = "bearer"
     
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
