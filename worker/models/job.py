@@ -16,7 +16,7 @@ class Job(Base):
     __tablename__="jobs"
     
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
     language: Mapped[str] = mapped_column(String(20), nullable=False)
     code: Mapped[str]
     status: Mapped[JobStatusEnum] = mapped_column(Enum(JobStatusEnum, name="jobstatusenum"), default=JobStatusEnum.PENDING) 
@@ -24,5 +24,5 @@ class Job(Base):
     stderr: Mapped[str | None] = mapped_column(nullable=True) #ошибки
     exit_code: Mapped[int | None] = mapped_column(nullable=True) #код завершения программы
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    started_at: Mapped[datetime | None] = mapped_column(nullable=True)
-    finished_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

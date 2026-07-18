@@ -20,6 +20,28 @@ services:
       - "15672:15672"
     volumes:
       - distributed_code_rabbitmq:/var/lib/rabbitmq
+
+  worker:
+    build: ./worker
+    container_name: distributed_worker
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - rabbitmq
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  
+  service:
+    build: ./app-service
+    container_name: distributed_api
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - rabbitmq
     
 volumes:
   distributed_code_db:
