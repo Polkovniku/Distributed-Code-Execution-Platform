@@ -42,6 +42,16 @@ services:
     depends_on:
       - db
       - rabbitmq
+
+  test-db:
+    image: postgres:16
+    container_name: distributed_test_db
+    environment:
+      POSTGRES_DB: test_db
+      POSTGRES_USER: petrovich
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
     
 volumes:
   distributed_code_db:
