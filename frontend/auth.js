@@ -21,8 +21,7 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     }
 
     const data = await res.json();
-    localStorage.setItem('token', data.access_token);
-    localStorage.setItem('refresh_token', data.refresh_token);
+    saveTokens(data.access_token, data.refresh_token);
     showApp();
   } catch (err) {
     authStatus.textContent = 'Ошибка: ' + err.message;

@@ -37,11 +37,19 @@ services:
     container_name: distributed_api
     env_file:
       - .env
-    ports:
-      - "8000:8000"
     depends_on:
       - db
       - rabbitmq
+  
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    container_name: distributed_nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - service
 
   test-db:
     image: postgres:16
