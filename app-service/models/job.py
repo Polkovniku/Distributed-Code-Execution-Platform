@@ -20,9 +20,9 @@ class Job(Base):
     language: Mapped[str] = mapped_column(String(20), nullable=False)
     code: Mapped[str]
     status: Mapped[JobStatusEnum] = mapped_column(Enum(JobStatusEnum, name="jobstatusenum"), default=JobStatusEnum.PENDING) 
-    stdout: Mapped[str | None] = mapped_column(nullable=True) #результат работы кода
-    stderr: Mapped[str | None] = mapped_column(nullable=True) #ошибки
-    exit_code: Mapped[int | None] = mapped_column(nullable=True) #код завершения программы
+    stdout: Mapped[str | None] = mapped_column(nullable=True) 
+    stderr: Mapped[str | None] = mapped_column(nullable=True) 
+    exit_code: Mapped[int | None] = mapped_column(nullable=True) 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

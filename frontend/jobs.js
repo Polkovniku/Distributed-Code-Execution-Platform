@@ -37,10 +37,44 @@ const editor = CodeMirror.fromTextArea(document.getElementById('code'), {
   tabSize: 4,
   extraKeys: { "Ctrl-Space": "autocomplete" }
 });
-editor.setValue("print('Hello, world')");
+
 
 const languageInput = document.getElementById('language');
 const output = document.getElementById('output');
+
+const DEFAULT_SNIPPETS = {
+  python: "print('Hello, world')",
+  javascript: "console.log('Hello, world')",
+  'c++': '#include <iostream>\n\nint main() {\n    std::cout << "Hello, world" << std::endl;\n    return 0;\n}',
+  go: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, world")\n}',
+  java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, world");\n    }\n}',
+  rust: 'fn main() {\n    println!("Hello, world");\n}'
+};
+
+editor.setValue(DEFAULT_SNIPPETS.python); 
+
+
+const MODES = {
+  python: 'python',
+  javascript: 'javascript',
+  'c++': 'text/x-c++src',
+  go: 'go',
+  java: 'text/x-java',
+  rust: 'rust'
+};
+
+languageInput.addEventListener('change', () => {
+  const lang = languageInput.value;
+  const currentValue = editor.getValue();
+  const isDefaultOrEmpty = !currentValue.trim() || 
+    Object.values(DEFAULT_SNIPPETS).includes(currentValue);
+
+  editor.setOption('mode', MODES[lang] || 'python');
+  if (isDefaultOrEmpty) {
+    editor.setValue(DEFAULT_SNIPPETS[lang] || '');
+  }
+});
+
 
 editor.on("inputRead", function (cm, change) {
   if (change.text[0] && /[a-zA-Z_]/.test(change.text[0])) {

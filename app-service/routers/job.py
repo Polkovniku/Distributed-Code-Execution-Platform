@@ -12,7 +12,6 @@ router = APIRouter(prefix="/jobs", tags=["jobs"])
 def get_job_service(db: Annotated[AsyncSession, Depends(get_db)]):
     return JobService(db)
 
-
 @router.get("/", response_model=list[JobResponse])
 async def get_jobs(user: Annotated[User, Depends(get_current_user)], service: Annotated[JobService, Depends(get_job_service)]):
     return await service.get_jobs_by_user(user.id)

@@ -3,11 +3,40 @@ import base64
 
 
 class CodeExecuter:
-    LANGUAGE_IMAGE = {
-        "python": "python:3.12-slim"
+    LANGUAGE_CONFIG = {
+        "python": {
+            "image": "python:3.12-slim",
+            "filename": "main.py",
+            "run_cmd": "python /tmp/{filename}"
+        },
+        "javascript": {
+            "image": "node:20-alpine",
+            "filename": "main.js",
+            "run_cmd": "node /tmp/{filename}"
+        },
+        "c++": {
+            "image": "gcc:13",
+            "filename": "main.cpp",
+            "run_cmd": "g++ /tmp/{filename} -o /tmp/main && /tmp/main"
+        },
+        "go": {
+            "image": "golang:1.22-alpine",
+            "filename": "main.go",
+            "run_cmd": "go run /tmp/{filename}"
+        },
+        "java": {
+            "image": "eclipse-temurin:21-jdk",
+            "filename": "Main.java",
+            "run_cmd": "cd /tmp && javac {filename} && java Main"
+        },
+        "rust": {
+            "image": "rust:1.77-slim",
+            "filename": "main.rs",
+            "run_cmd": "rustc /tmp/{filename} -o /tmp/main && /tmp/main"
+        }
     }
     
-    def __init__(self, timeout_second: int = 10, mem_limit: str = "128m", cpu_quota: int = 50000):
+    def __init__(self, timeout_second: int = 60, mem_limit: str = "128m", cpu_quota: int = 50000):
         self.client = docker.from_env()
         self.timeout_second = timeout_second
         self.mem_limit = mem_limit
@@ -15,15 +44,16 @@ class CodeExecuter:
 
 
     def run(self, language: str, code: str) -> dict:
-        image = self.LANGUAGE_IMAGE.get(language)
-        if image is None:
+        config = self.LANGUAGE_CONFIG.get(language)
+        if config is None:
             return {"stdout": "", "stderr": f"Unsupported language: {language}", "exit_code": None, "status": "FAILED"}
 
         encoded_code = base64.b64encode(code.encode()).decode()
-        command = ["sh", "-c", f"echo {encoded_code} | base64 -d > /tmp/main.py && python /tmp/main.py"]
+        run_cmd = config["run_cmd"].format(filename=config["filename"])
+        command = ["sh", "-c", f"echo {encoded_code} | base64 -d > /tmp/{config['filename']} && {run_cmd}"]
 
         container = self.client.containers.run(
-            image=image,
+            image=config["image"],
             command=command,
             mem_limit=self.mem_limit,
             cpu_quota=self.cpu_quota,

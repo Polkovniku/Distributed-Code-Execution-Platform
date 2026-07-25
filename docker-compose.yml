@@ -32,6 +32,15 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
   
+  beat:
+    build: ./worker
+    container_name: distributed_beat
+    command: uv run celery -A core.celery_app beat --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+  
   service:
     build: ./app-service
     container_name: distributed_api
@@ -60,6 +69,8 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - "5433:5432"
+    profiles:
+      - test
     
 volumes:
   distributed_code_db:

@@ -4,6 +4,9 @@ from service.job_repository import JobRepository
 import asyncio
 from core.database import AsyncSessionLocal
 from models.job import JobStatusEnum
+from datetime import datetime, timedelta, timezone
+from models.job import Job
+from sqlalchemy import delete
 
 @celery_app.task(name="execute_code_task")
 def execute_code_task(job_id: str):
@@ -30,3 +33,14 @@ async def _execute_code_task(job_id: str):
             exit_code=result["exit_code"],
             status=JobStatusEnum(result["status"])
         )
+        
+        
+@celery_app.task(name="cleanup_old_jobs")
+def cleanup_old_jobs():
+    asyncio.run(_cleanup_old_jobs())
+    
+async def _cleanup_old_jobs():
+    async with AsyncSessionLocal() as db:
+        cutoff = datetime.now(timezone.utc) - timedelta(days=1)
+        await db.execute(delete(Job).where(Job.created_at < cutoff))
+        await db.commit()
