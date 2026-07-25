@@ -61,7 +61,7 @@ async function authFetch(url, options = {}) {
     if (!refreshed) {
       clearTokens();
       showLogin();
-      throw new Error('Сессия истекла, авторизуйтесь заново');
+      throw new Error('Сесія закінчилася, авторизуйтесь заново');
     }
 
     options.headers['Authorization'] = `Bearer ${getToken()}`;

@@ -4,7 +4,7 @@ const passwordInput = document.getElementById('password');
 const usernameInput = document.getElementById('username');
 
 document.getElementById('loginBtn').addEventListener('click', async () => {
-  authStatus.textContent = 'Вход...';
+  authStatus.textContent = 'Вхід...';
   try {
     const res = await fetch('/auth/login', {
       method: 'POST',
@@ -16,7 +16,7 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     });
 
     if (!res.ok) {
-      authStatus.textContent = 'Неверный email/пароль';
+      authStatus.textContent = 'Невірний email/пароль';
       return;
     }
 
@@ -24,12 +24,12 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     saveTokens(data.access_token, data.refresh_token);
     showApp();
   } catch (err) {
-    authStatus.textContent = 'Ошибка: ' + err.message;
+    authStatus.textContent = 'Помилка: ' + err.message;
   }
 });
 
 document.getElementById('registerBtn').addEventListener('click', async () => {
-  authStatus.textContent = 'Регистрация...';
+  authStatus.textContent = 'Реєстрація...';
   try {
     const res = await fetch('/auth/register', {
       method: 'POST',
@@ -42,12 +42,12 @@ document.getElementById('registerBtn').addEventListener('click', async () => {
     });
 
     if (!res.ok) {
-      authStatus.textContent = 'Ошибка регистрации';
+      authStatus.textContent = 'Помилка реєстрації';
       return;
     }
 
-    authStatus.textContent = 'Успешно! Теперь войдите.';
+    authStatus.textContent = 'Успішно! Тепер увійдіть.';
   } catch (err) {
-    authStatus.textContent = 'Ошибка: ' + err.message;
+    authStatus.textContent = 'Помилка: ' + err.message;
   }
 });

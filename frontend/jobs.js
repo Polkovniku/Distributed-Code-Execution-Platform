@@ -84,11 +84,11 @@ editor.on("inputRead", function (cm, change) {
 
 document.getElementById('runBtn').addEventListener('click', async () => {
   if (!getToken()) {
-    output.textContent = 'Нужна авторизация';
+    output.textContent = 'Потрібна авторизація';
     return;
   }
 
-  output.textContent = 'Отправка...';
+  output.textContent = 'Надсилання...';
 
   try {
     const res = await authFetch('/jobs/', {
@@ -103,12 +103,12 @@ document.getElementById('runBtn').addEventListener('click', async () => {
     const job = await res.json();
     pollJob(job.job_id);
   } catch (err) {
-    output.textContent = 'Ошибка: ' + err.message;
+    output.textContent = 'Помилка: ' + err.message;
   }
 });
 
 async function pollJob(jobId) {
-  output.textContent = 'Выполняется...';
+  output.textContent = 'Виконується...';
   const interval = setInterval(async () => {
     try {
       const res = await authFetch(`/jobs/${jobId}`);
@@ -122,7 +122,7 @@ async function pollJob(jobId) {
       clearInterval(interval);
 
       if (job.status === 'TIMEOUT') {
-        output.textContent = 'Превышено время выполнения';
+        output.textContent = 'Перевищено час виконання';
         return;
       }
 
