@@ -75,6 +75,10 @@ Browser → nginx → api-service (FastAPI) → RabbitMQ → worker (Celery) →
 1. Скопіювати репозиторій та створити .env файл (змінні для Postgres, RabbitMQ, JWT-секретів)
 
 ```
+git clone https://github.com/Polkovniku/Distributed-Code-Execution-Platform.git
+```
+
+```
 POSTGRES_DB=distributed_code_db
 POSTGRES_USER=your_user
 POSTGRES_PASSWORD=your_password

@@ -8,6 +8,10 @@ services:
       - "5432:5432"
     volumes:
       - distributed_code_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 5s
+      retries: 5
 
 
   rabbitmq:
@@ -27,8 +31,10 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
-      - rabbitmq
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
   
@@ -47,8 +53,11 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
-      - rabbitmq
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    command: sh -c "uv run alembic upgrade head && uv run uvicorn main:app --host 0.0.0.0 --port 8000"
   
   nginx:
     build:
