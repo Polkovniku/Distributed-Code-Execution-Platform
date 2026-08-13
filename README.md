@@ -98,13 +98,13 @@ docker compose up --build
 3. Головна сторінка
 
 ```
-http://localhost/
+http://localhost:8081/
 ```
 
 
 ## API
 
-Повна документація Swagger доступна на http://localhost/docs після запуску.
+Повна документація Swagger доступна на http://localhost:8081/docs після запуску.
 
 ### Основные эндпоинты
 - POST /auth/register - реєстрація
