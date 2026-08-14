@@ -2,6 +2,9 @@
 
 Платформа для безпечного запуску персонального коду на різних мовах програмування в ізольованих Docker-контейнерах. Backend-орієнтований проект: FastAPI + Celery + Docker SDK, із простим vanilla JS фронтендом для демонстрації.
 
+## Деплой
+Сервіс розмещенний на VPS та доступний за посиланням https://coderun.pp.ua/ , також  документація Swagger за https://coderun.pp.ua/docs
+
 ## Можливости
 
 - Запуск коду в ізольованих Docker-контейнерах (без мережі, з лімітами CPU/пам'яті)
@@ -140,3 +143,8 @@ uv run pytest
 ```
 docker compose --profile test down
 ```
+
+
+## Приклад роботи
+
+<img width="1411" height="883" alt="Снимок экрана 2026-08-14 135156" src="https://github.com/user-attachments/assets/d6216fd3-1169-4cf6-9017-fbbad1796ab4" />
