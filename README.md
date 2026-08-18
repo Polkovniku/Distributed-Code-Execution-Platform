@@ -1,4 +1,3 @@
-<img width="1854" height="907" alt="Снимок экрана 2026-08-18 154504" src="https://github.com/user-attachments/assets/2a82cdfd-40cb-45ce-acfd-f146633fb166" />
 # Distributed Code Execution Platform
 
 A platform for safely running user code in multiple programming languages inside isolated Docker containers. This is a backend-oriented project built with FastAPI + Celery + Docker SDK, with a simple vanilla JS frontend for demonstration.
