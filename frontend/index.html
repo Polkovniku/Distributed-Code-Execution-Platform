@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Code Runner</title>
@@ -9,19 +9,31 @@
 </head>
 <body>
   <div class="container">
-    <h1>Запуск коду</h1>
+    <div class="topbar">
+      <div>
+        <h1 id="appHeading">Code Runner</h1>
+      </div>
+      <div class="language-switcher">
+        <label id="interfaceLanguageLabel" for="uiLanguage">Interface language</label>
+        <select id="uiLanguage">
+          <option value="en">English</option>
+          <option value="uk">Українська</option>
+        </select>
+      </div>
+    </div>
     <div class="card">
       <div id="authBlock">
-        <h2>Вхід</h2>
+        <h2 id="authHeading">Sign in</h2>
         <input id="email" type="email" placeholder="Email">
-        <input id="password" type="password" placeholder="Пароль">
-        <input id="username" type="text" placeholder="Логин (для регистрации)">
-        <button id="loginBtn">Увійти</button>
-        <button id="registerBtn">Реєстрація</button>
+        <input id="password" type="password" placeholder="Password">
+        <input id="username" type="text" placeholder="Username (for registration)">
+        <button id="loginBtn">Sign in</button>
+        <button id="registerBtn">Register</button>
         <span id="authStatus"></span>
       </div>
 
       <div id="appBlock" style="display:none">
+        <label id="languageLabel" for="language">Programming language</label>
         <select id="language">
           <option value="python">Python</option>
           <option value="javascript">JavaScript</option>
@@ -31,8 +43,8 @@
           <option value="rust">Rust</option>
         </select>
         <textarea id="code" placeholder="print('Hello, world')"></textarea>
-        <button id="runBtn">Запустити</button>
-        <h3>Результат:</h3>
+        <button id="runBtn">Run</button>
+        <h3 id="resultHeading">Result</h3>
         <pre id="output">—</pre>
       </div>
     </div>
@@ -52,6 +64,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/anyword-hint.min.js"></script>
 
   <script src="keywords.js"></script>
+  <script src="i18n.js"></script>
   <script src="common.js"></script>
   <script src="auth.js"></script>
   <script src="jobs.js"></script>

@@ -61,7 +61,7 @@ async function authFetch(url, options = {}) {
     if (!refreshed) {
       clearTokens();
       showLogin();
-      throw new Error('Сесія закінчилася, авторизуйтесь заново');
+      throw new Error(t('sessionExpired'));
     }
 
     options.headers['Authorization'] = `Bearer ${getToken()}`;
@@ -70,5 +70,7 @@ async function authFetch(url, options = {}) {
 
   return res;
 }
+
+setLanguage(getStoredLanguage());
 
 if (getToken()) showApp();

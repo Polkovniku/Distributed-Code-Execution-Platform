@@ -84,11 +84,11 @@ editor.on("inputRead", function (cm, change) {
 
 document.getElementById('runBtn').addEventListener('click', async () => {
   if (!getToken()) {
-    output.textContent = 'Потрібна авторизація';
+    output.textContent = t('authRequired');
     return;
   }
 
-  output.textContent = 'Надсилання...';
+  output.textContent = t('submitting');
 
   try {
     const res = await authFetch('/jobs/', {
@@ -103,26 +103,26 @@ document.getElementById('runBtn').addEventListener('click', async () => {
     const job = await res.json();
     pollJob(job.job_id);
   } catch (err) {
-    output.textContent = 'Помилка: ' + err.message;
+    output.textContent = t('outputError', { message: err.message });
   }
 });
 
 async function pollJob(jobId) {
-  output.textContent = 'Виконується...';
+  output.textContent = t('running');
   const interval = setInterval(async () => {
     try {
       const res = await authFetch(`/jobs/${jobId}`);
       const job = await res.json();
 
       if (job.status === 'PENDING' || job.status === 'RUNNING') {
-        output.textContent = `Статус: ${job.status}...`;
+        output.textContent = t('jobStatus', { status: job.status });
         return;
       }
 
       clearInterval(interval);
 
       if (job.status === 'TIMEOUT') {
-        output.textContent = 'Перевищено час виконання';
+        output.textContent = t('jobTimedOut');
         return;
       }
 
@@ -132,7 +132,7 @@ async function pollJob(jobId) {
         `exit_code: ${job.exit_code ?? '-'}`;
     } catch (err) {
       clearInterval(interval);
-      output.textContent = err.message;
+      output.textContent = t('outputError', { message: err.message });
     }
   }, 1000);
 }
