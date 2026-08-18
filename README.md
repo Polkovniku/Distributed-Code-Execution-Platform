@@ -1,24 +1,27 @@
 # Distributed Code Execution Platform
 
-Платформа для безпечного запуску персонального коду на різних мовах програмування в ізольованих Docker-контейнерах. Backend-орієнтований проект: FastAPI + Celery + Docker SDK, із простим vanilla JS фронтендом для демонстрації.
+A platform for safely running user code in multiple programming languages inside isolated Docker containers. This is a backend-oriented project built with FastAPI + Celery + Docker SDK, with a simple vanilla JS frontend for demonstration.
 
-## Деплой
-Сервіс розмещенний на VPS та доступний за посиланням https://coderun.pp.ua/ , також  документація Swagger за https://coderun.pp.ua/docs
+## Deployment
 
-Тестові данні 
-test@gmail.com
-testpassword
+The service is deployed on a VPS and is available at https://coderun.pp.ua/. Swagger documentation is available at https://coderun.pp.ua/docs.
 
-## Можливости
+Test credentials:
 
-- Запуск коду в ізольованих Docker-контейнерах (без мережі, з лімітами CPU/пам'яті)
-- Підтримка 6 мов: Python, JavaScript, C++, Go, Java, Rust
-- Асинхронна обробка завдань через чергу (Celery + RabbitMQ)
-- JWT-аутентифікація (access + refresh токени)
-- Автоматичне очищення старих записів за розкладом (Celery Beat)
-- Веб-інтерфейс з підсвічуванням синтаксису та автодоповненням (CodeMirror)
+`test@gmail.com`
 
-## Архітектура
+`testpassword`
+
+## Features
+
+- Code execution in isolated Docker containers with no network access and CPU/memory limits
+- Support for 6 languages: Python, JavaScript, C++, Go, Java, Rust
+- Asynchronous job processing through a queue (Celery + RabbitMQ)
+- JWT authentication with access and refresh tokens
+- Automatic cleanup of old records on a schedule (Celery Beat)
+- A web interface with syntax highlighting and autocomplete (CodeMirror)
+
+## Architecture
 
 ```
 Browser → nginx → api-service (FastAPI) → RabbitMQ → worker (Celery) → Docker containers
@@ -26,60 +29,60 @@ Browser → nginx → api-service (FastAPI) → RabbitMQ → worker (Celery) →
                       PostgreSQL ←───────────────────────────────
 ```
 
+- nginx serves frontend static files and proxies /auth/* and /jobs/* to the backend
+- api-service receives requests, creates jobs in the database, and publishes tasks to the queue
+- worker pulls tasks from the queue, starts a Docker container, executes code, and stores the result
+- beat schedules cleanup tasks for old records
+- api-service and worker do not communicate directly over HTTP; they communicate through the task queue (RabbitMQ), which allows workers to scale independently from the API
 
-- nginx - роздає статику фронтенду, проксує /auth/* та /jobs/* на бекенд
-- api-service - приймає запити, створює job у БД, публікує завдання в чергу
-- worker - забирає завдання з черги, піднімає Docker-контейнер, виконує код, зберігає результат
-- beat — за розкладом надсилає завдання очищення старих записів
-- Api-service та worker спілкуються не напряму (HTTP), а через чергу завдань (RabbitMQ) – це дозволяє масштабувати воркери незалежно від API
+## Stack
 
-## Стек
-
-### Backend: 
-- Python 
-- FastAPI 
+### Backend
+- Python
+- FastAPI
 - SQLAlchemy (async)
 - PostgreSQL
-- Alembic 
+- Alembic
 - pytest
 
-### Messaging: 
-- Celery 
-- RabbitMQ 
+### Messaging
+- Celery
+- RabbitMQ
 
 ### Containerization
 - Docker SDK for Python
 - Docker Compose
 
 ### Authentication
-- JWT 
+- JWT
 
-### Frontend: 
-- Vanilla JavaScript, 
-- CodeMirror 5, 
+### Frontend
+- Vanilla JavaScript
+- CodeMirror 5
 - nginx
 
-## Поддерживаемые языки
+## Supported Languages
 
-| Язык | Docker-образ | Спосіб виконання |
+| Language | Docker image | Execution method |
 |---|---|---|
-| Python | python:3.12-slim | інтерпретація |
-| JavaScript | node:20-alpine | інтерпретація |
-| C++ | gcc:13 | компіляція + запуск |
-| Go | golang:1.22-alpine | компіляція + запуск |
-| Java | eclipse-temurin:21-jdk | компіляція + запуск |
-| Rust | rust:1.77-slim | компіляція + запуск |
+| Python | python:3.12-slim | interpreted |
+| JavaScript | node:20-alpine | interpreted |
+| C++ | gcc:13 | compile + run |
+| Go | golang:1.22-alpine | compile + run |
+| Java | eclipse-temurin:21-jdk | compile + run |
+| Rust | rust:1.77-slim | compile + run |
 
-## Ізоляція та безпека
-- Кожен job виконується в окремому одноразовому контейнері (-rm)
-- Мережа всередині контейнера вимкнена (network_disabled)
-- Обмеження по пам'яті та CPU (mem_limit, cpu_quota)
-- Таймаут на виконання – контейнер примусово вбивається при перевищенні
-- Код передається в контейнер як base64-encoded рядок через команду запуску (без монтування файлів з хоста)
+## Isolation and Security
 
-## Запуск проекту
+- Each job runs in a separate disposable container (`--rm`)
+- Network access inside the container is disabled (`network_disabled`)
+- Memory and CPU limits are enforced (`mem_limit`, `cpu_quota`)
+- Execution is time-limited and the container is forcefully stopped if the limit is exceeded
+- Code is passed into the container as a base64-encoded string through the startup command, without mounting files from the host
 
-1. Скопіювати репозиторій та створити .env файл (змінні для Postgres, RabbitMQ, JWT-секретів)
+## Running the Project
+
+1. Clone the repository and create a `.env` file with the Postgres, RabbitMQ, and JWT secret variables
 
 ```
 git clone https://github.com/Polkovniku/Distributed-Code-Execution-Platform.git
@@ -96,44 +99,45 @@ DB_HOST=db
 RABBITMQ_HOST=rabbitmq
 ```
 
-2. Підняти сервіси
+2. Start the services
 
 ```
 docker compose up --build
 ```
 
-3. Головна сторінка
+3. Open the main page
 
 ```
 http://localhost:8081/
 ```
 
-
 ## API
 
-Повна документація Swagger доступна на http://localhost:8081/docs після запуску.
+Full Swagger documentation is available at http://localhost:8081/docs after startup.
 
-### Основные эндпоинты
-- POST /auth/register - реєстрація
-- POST /auth/login - вхід, повертає access/refresh токени
-- POST /auth/token - оновлення access-токена по refresh-токену
-- GET /auth/me - отримання користувача
-- POST /jobs/ - створити job (код + мова)
-- GET /jobs/{id} — отримати статус та результат виконання
-- GET /jobs/ — список job'ів користувача
+### Main Endpoints
 
-### Зупинення сервісів
+- POST /auth/register - register a user
+- POST /auth/login - sign in and return access/refresh tokens
+- POST /auth/token - refresh the access token using a refresh token
+- GET /auth/me - get the current user
+- POST /jobs/ - create a job (code + language)
+- GET /jobs/{id} - get the execution status and result
+- GET /jobs/ - list the user's jobs
+
+### Stopping the Services
 
 ```
 docker compose down
 ```
 
-## Тести
+## Tests
 
-Backend покритий тестами на pytest з окремою тестовою БД (test-db сервіс у docker-compose).
+The backend is covered by pytest tests with a separate test database (`test-db` service in docker-compose).
 
-### Запуск тестів
-Потрібен встановлений `uv` та синхронізовані залежності:
+### Running Tests
+
+You need `uv` installed and synchronized dependencies:
 
 ```
 cd app-service
@@ -142,13 +146,12 @@ docker compose --profile test up -d test-db
 uv run pytest
 ```
 
-### Зупинка тестової БД
+### Stopping the Test Database
 
 ```
 docker compose --profile test down
 ```
 
+## Example
 
-## Приклад роботи
-
-<img width="1411" height="883" alt="Снимок экрана 2026-08-14 135156" src="https://github.com/user-attachments/assets/d6216fd3-1169-4cf6-9017-fbbad1796ab4" />
+<img width="1411" height="883" alt="Screenshot 2026-08-14 135156" src="https://github.com/user-attachments/assets/d6216fd3-1169-4cf6-9017-fbbad1796ab4" />
